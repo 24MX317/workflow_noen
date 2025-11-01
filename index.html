@@ -10,43 +10,108 @@
       background-color: #eef3f8;
       padding: 40px;
     }
+
     h1 {
       text-align: center;
       color: #2e3a59;
       margin-bottom: 30px;
     }
+
     table {
       margin: 0 auto;
       border-collapse: collapse;
-      width: 75%;
+      width: 80%;
       background-color: #ffffff;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       border-radius: 10px;
       overflow: hidden;
     }
+
     th, td {
       padding: 12px 16px;
       text-align: left;
       border-bottom: 1px solid #ddd;
     }
+
     th {
       background-color: #007bff;
       color: white;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
     tr:nth-child(even) {
       background-color: #f9f9f9;
     }
+
     tr:hover {
       background-color: #e6f2ff;
       transition: 0.3s ease;
     }
+
+    form {
+      width: 80%;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    form input {
+      padding: 8px;
+      margin: 8px;
+      width: 22%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 8px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      background-color: #007bff;
+      margin: 8px;
+      transition: 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .edit-btn {
+      background-color: #28a745;
+    }
+
+    .edit-btn:hover {
+      background-color: #1e7e34;
+    }
+
+    .delete-btn {
+      background-color: #dc3545;
+    }
+
+    .delete-btn:hover {
+      background-color: #b02a37;
+    }
+
   </style>
 </head>
 <body>
   <h1>Client Information</h1>
 
+  <!-- Add/Edit Form -->
+  <form id="clientForm">
+    <input type="hidden" id="clientId" />
+    <input type="text" id="name" placeholder="Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="text" id="country" placeholder="Country" required />
+    <button type="submit">Save</button>
+  </form>
+
+  <!-- Display Table -->
   <table id="clientTable">
     <thead>
       <tr>
@@ -54,46 +119,85 @@
         <th>Name</th>
         <th>Email</th>
         <th>Country</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
   <script>
-    async function loadClients() {
-      try {
-        // 🧠 If your API is not yet deployed, this block uses mock data.
-        // Later, replace this with: 
-        // const response = await fetch('https://your-api-url.onrender.com/clients');
-        // const clients = await response.json();
+    let clients = [
+      { id: 1, name: "John Doe", email: "john@example.com", country: "USA" },
+      { id: 2, name: "Jane Smith", email: "jane@example.com", country: "Canada" },
+      { id: 3, name: "Ali Khan", email: "ali@example.com", country: "India" }
+    ];
 
-        const clients = [
-          { id: 1, name: "John Doe", email: "john@example.com", country: "USA" },
-          { id: 2, name: "Jane Smith", email: "jane@example.com", country: "Canada" },
-          { id: 3, name: "Ali Khan", email: "ali@example.com", country: "India" }
-        ];
+    function renderTable() {
+      const tbody = document.querySelector("#clientTable tbody");
+      tbody.innerHTML = "";
 
-        const tbody = document.querySelector("#clientTable tbody");
-        tbody.innerHTML = "";
-
-        clients.forEach(client => {
-          const row = `
-            <tr>
-              <td>${client.id}</td>
-              <td>${client.name}</td>
-              <td>${client.email}</td>
-              <td>${client.country}</td>
-            </tr>`;
-          tbody.innerHTML += row;
-        });
-      } catch (error) {
-        console.error("Error loading data:", error);
-        document.querySelector("#clientTable tbody").innerHTML = `
-          <tr><td colspan="4" style="text-align:center; color:red;">Failed to load data</td></tr>`;
-      }
+      clients.forEach(client => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${client.id}</td>
+          <td>${client.name}</td>
+          <td>${client.email}</td>
+          <td>${client.country}</td>
+          <td>
+            <button class="edit-btn" onclick="editClient(${client.id})">Edit</button>
+            <button class="delete-btn" onclick="deleteClient(${client.id})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
     }
 
-    loadClients();
+    function addOrUpdateClient(e) {
+      e.preventDefault();
+      const id = document.getElementById("clientId").value;
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const country = document.getElementById("country").value.trim();
+
+      if (id) {
+        // Update existing client
+        const client = clients.find(c => c.id == id);
+        client.name = name;
+        client.email = email;
+        client.country = country;
+      } else {
+        // Add new client
+        const newClient = {
+          id: clients.length ? Math.max(...clients.map(c => c.id)) + 1 : 1,
+          name,
+          email,
+          country
+        };
+        clients.push(newClient);
+      }
+
+      document.getElementById("clientForm").reset();
+      document.getElementById("clientId").value = "";
+      renderTable();
+    }
+
+    function editClient(id) {
+      const client = clients.find(c => c.id === id);
+      document.getElementById("clientId").value = client.id;
+      document.getElementById("name").value = client.name;
+      document.getElementById("email").value = client.email;
+      document.getElementById("country").value = client.country;
+    }
+
+    function deleteClient(id) {
+      clients = clients.filter(c => c.id !== id);
+      renderTable();
+    }
+
+    document.getElementById("clientForm").addEventListener("submit", addOrUpdateClient);
+
+    // Initial table load
+    renderTable();
   </script>
 </body>
 </html>
