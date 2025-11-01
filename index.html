@@ -126,4 +126,11 @@
 
     async function deleteClient() {
       const id = document.getElementById("id").value;
-      await fetch
+      await fetch(`${API}/${id}`, { method: "DELETE" });
+      loadClients();
+    }
+
+    loadClients();
+  </script>
+</body>
+</html>
