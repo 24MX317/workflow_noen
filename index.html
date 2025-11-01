@@ -38,41 +38,16 @@
 </head>
 <body>
   <h1>Customer Records</h1>
-  <table id="customerTable">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Country</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
+  <table>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Country</th>
+    </tr>
+    <tr><td>1</td><td>John Doe</td><td>john@example.com</td><td>USA</td></tr>
+    <tr><td>2</td><td>Jane Smith</td><td>jane@example.com</td><td>Canada</td></tr>
+    <tr><td>3</td><td>Ali Khan</td><td>ali@example.com</td><td>India</td></tr>
   </table>
-
-  <script>
-    async function loadCustomers() {
-      try {
-        const response = await fetch('https://ecommerce-data.onrender.com/customers');
-        const customers = await response.json();
-        const tbody = document.querySelector("#customerTable tbody");
-        tbody.innerHTML = "";
-        customers.forEach(c => {
-          const row = `<tr>
-            <td>${c.id}</td>
-            <td>${c.name}</td>
-            <td>${c.email}</td>
-            <td>${c.country}</td>
-          </tr>`;
-          tbody.innerHTML += row;
-        });
-      } catch (error) {
-        console.error("Error loading data:", error);
-      }
-    }
-
-    loadCustomers();
-  </script>
 </body>
 </html>
-
