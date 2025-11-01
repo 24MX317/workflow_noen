@@ -17,7 +17,100 @@
     table {
       margin: 0 auto;
       border-collapse: collapse;
-      width: 70%;
+      width: 70%;<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Client Information</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #eef3f8;
+      padding: 40px;
+    }
+    h1 {
+      text-align: center;
+      color: #2e3a59;
+      margin-bottom: 30px;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 75%;
+      background-color: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #e6f2ff;
+      transition: 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+  <h1>Client Information</h1>
+
+  <table id="clientTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Country</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    async function loadClients() {
+      try {
+        // 👇 Change this URL once your backend is deployed (Flask or Node)
+        const response = await fetch('https://customer-records-api.onrender.com/clients');
+        if (!response.ok) throw new Error("Network response was not ok");
+        
+        const clients = await response.json();
+        const tbody = document.querySelector("#clientTable tbody");
+        tbody.innerHTML = "";
+
+        clients.forEach(client => {
+          const row = `
+            <tr>
+              <td>${client.id}</td>
+              <td>${client.name}</td>
+              <td>${client.email}</td>
+              <td>${client.country}</td>
+            </tr>`;
+          tbody.innerHTML += row;
+        });
+      } catch (error) {
+        console.error("Error loading data:", error);
+        document.querySelector("#clientTable tbody").innerHTML = `
+          <tr><td colspan="4" style="text-align:center; color:red;">Failed to load data</td></tr>`;
+      }
+    }
+
+    loadClients();
+  </script>
+</body>
+</html>
+
       background-color: #fff;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
@@ -51,3 +144,4 @@
   </table>
 </body>
 </html>
+
